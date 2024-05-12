@@ -52,7 +52,7 @@ dati_dettagli = spark.read \
     .option("header","true") \
     .option("quote", "\"") \
     .option("escape", "\"") \
-    .csv(dettagli_path)
+    .csv(dettagli_path) 
 
 dati_dettagli = dati_dettagli.select(col("id").alias("id_ref"),
                                          col("description"),
@@ -61,7 +61,7 @@ dati_dettagli = dati_dettagli.select(col("id").alias("id_ref"),
 
 # AND JOIN WITH THE MAIN TABLE
 tedx_dataset_main = dati_video.join(dati_dettagli, dati_video.id == dati_dettagli.id_ref, "left") \
-    .drop("id_ref")
+    .drop("id_ref") \
 
 tedx_dataset_main.printSchema()
 
@@ -85,7 +85,7 @@ dati_tag = spark.read.option("header","true").csv(tags_path)
 dati_tag_format = dati_tag.groupBy(col("id").alias("id_ref")).agg(collect_list("tag").alias("tags"))
 dati_tag_format.printSchema()
 tedx_dataset_main = tedx_dataset_main.join(dati_tag_format, tedx_dataset_main.id == dati_tag_format.id_ref, "left") \
-    .drop("id_ref")
+    .drop("id_ref") \
 
 tedx_dataset_main.printSchema()
 
@@ -98,9 +98,12 @@ video_struct= struct(col("related_id"),col("title"),col("duration"),col("viewedC
 dati_watch_next_format = dati_watch_next.groupBy(col("id").alias("id_ref")).agg(collect_list(video_struct).alias("related_videos"))
 
 tedx_dataset_main = tedx_dataset_main.join(dati_watch_next_format, tedx_dataset_main.id == dati_watch_next_format.id_ref, "left") \
-    .drop("id_ref")
+    .drop("id_ref") \
+    .select(col("id").alias("_id"), col("*")) \
+    .drop("id") \
 
 tedx_dataset_main.printSchema()
+
 
 
 write_mongo_options = {
