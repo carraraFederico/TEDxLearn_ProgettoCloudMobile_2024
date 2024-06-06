@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const talk_schema = new mongoose.Schema({
+    _id: String,
     title: String,
     url: String,
     description: String,
