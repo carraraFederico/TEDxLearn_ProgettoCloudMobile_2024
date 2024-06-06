@@ -16,7 +16,7 @@ from awsglue.job import Job
 
 
 #Lettura parametri
-video_path = "s3://tedx-mieidati/final_list.csv"
+video_path = "s3://tedxlearn-dati/final_list.csv"
 args = getResolvedOptions(sys.argv, ['JOB_NAME'])
 
 
@@ -47,7 +47,7 @@ print(f"Number of items from RAW DATA with NOT NULL KEY {video_not_null}")
 
 
 #Lettura dettagli video (id,slug,interalId,description,duration,socialDescription,presenterDisplayName,publishedAt)
-dettagli_path = "s3://tedx-mieidati/details.csv"
+dettagli_path = "s3://tedxlearn-dati/details.csv"
 dati_dettagli = spark.read.option("header","true").csv(dettagli_path) 
 
 dati_dettagli = dati_dettagli.select(col("id").alias("id_ref"),
@@ -62,7 +62,7 @@ tedx_dataset_main = dati_video.join(dati_dettagli, dati_video.id == dati_dettagl
 
 
 #Lettura immagini (id,slug,url)
-img_path = "s3://tedx-mieidati/images.csv"
+img_path = "s3://tedxlearn-dati/images.csv"
 dati_img = spark.read.option("header","true").csv(img_path)
 dati_img = dati_img.select(col("id").alias("id_ref"),
                             col("url").alias("url_img"))
@@ -71,7 +71,7 @@ tedx_dataset_main = tedx_dataset_main.join(dati_img, tedx_dataset_main.id == dat
     .drop("id_ref") \
 
 # Aggiunta viewedCount
-watch_next_path = "s3://tedx-mieidati/related_videos.csv"
+watch_next_path = "s3://tedxlearn-dati/related_videos.csv"
 dati_view = spark.read.option("header", "true").csv(watch_next_path)
 
 dati_view = dati_view.select(col("id").alias("id_v"), col("viewedCount").cast("long"))
@@ -83,7 +83,7 @@ tedx_dataset_main = tedx_dataset_main.join(dati_view, tedx_dataset_main.id == da
 
 
 #Lettura tag (id,slug,internalId,tag)
-tags_path = "s3://tedx-mieidati/tags.csv"
+tags_path = "s3://tedxlearn-dati/tags.csv"
 dati_tag = spark.read.option("header","true").csv(tags_path)
 
 dati_tag_format = dati_tag.groupBy(col("id").alias("id_ref")).agg(collect_list("tag").alias("tags"))
@@ -143,7 +143,7 @@ tedx_dataset_main = tedx_dataset_main.join(dati_watch_next_format, tedx_dataset_
 
 
 write_mongo_options = {
-    "connectionName": "TEDx2024",
+    "connectionName": "TEDxLearn",
     "database": "unibg_tedx_2024",
     "collection": "tedx_data",
     "ssl": "true",

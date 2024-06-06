@@ -13,7 +13,7 @@ from awsglue.job import Job
 
 
 ##### FROM FILES
-login_dataset_path = "s3://tedx-mieidati/login.csv"
+login_dataset_path = "s3://tedxlearn-dati/login.csv"
 
 ###### READ PARAMETERS
 args = getResolvedOptions(sys.argv, ['JOB_NAME'])
@@ -35,7 +35,7 @@ login_dataset = spark.read \
     .csv(login_dataset_path)
 
 write_mongo_options = {
-    "connectionName": "TEDx2024",
+    "connectionName": "TEDxLearn",
     "database": "unibg_tedx_2024",
     "collection": "login_data",
     "ssl": "true",

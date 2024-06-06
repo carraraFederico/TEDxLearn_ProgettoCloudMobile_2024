@@ -11,7 +11,7 @@ from awsglue.context import GlueContext
 from awsglue.job import Job
 
 # Lettura parametri
-tag_path = "s3://tedx-mieidati/tags.csv"
+tag_path = "s3://tedxlearn-dati/tags.csv"
 args = getResolvedOptions(sys.argv, ['JOB_NAME'])
 
 # Inizializzazione Spark Context e Job
@@ -31,11 +31,11 @@ dati_tag = spark.read \
     .csv(tag_path)
 
 # Lettura dati video (id, slug, speakers, title, url)
-video_path = "s3://tedx-mieidati/final_list.csv"
+video_path = "s3://tedxlearn-dati/final_list.csv"
 dati_video = spark.read.option("header", "true").csv(video_path)
 
 # Lettura dettagli video (id, slug, internalId, description, duration, socialDescription, presenterDisplayName, publishedAt)
-dettagli_path = "s3://tedx-mieidati/details.csv"
+dettagli_path = "s3://tedxlearn-dati/details.csv"
 dati_dettagli = spark.read.option("header", "true").csv(dettagli_path)
 
 dati_dettagli = dati_dettagli.select(col("id").alias("id_ref"),
@@ -48,7 +48,7 @@ tedx_dataset_main = dati_video.join(dati_dettagli, dati_video.id == dati_dettagl
     .drop("id_ref")
 
 # Lettura immagini (id, slug, url)
-img_path = "s3://tedx-mieidati/images.csv"
+img_path = "s3://tedxlearn-dati/images.csv"
 dati_img = spark.read.option("header", "true").csv(img_path)
 dati_img = dati_img.select(col("id").alias("id_ref"),
                            col("url").alias("url_img"))
@@ -57,7 +57,7 @@ tedx_dataset_main = tedx_dataset_main.join(dati_img, tedx_dataset_main.id == dat
     .drop("id_ref")
 
 # Aggiunta viewedCount
-watch_next_path = "s3://tedx-mieidati/related_videos.csv"
+watch_next_path = "s3://tedxlearn-dati/related_videos.csv"
 dati_view = spark.read.option("header", "true").csv(watch_next_path)
 
 dati_view = dati_view.select(col("id").alias("id_v"), col("viewedCount").cast("long"))
@@ -141,7 +141,7 @@ video_by_tag = video_by_tag.orderBy(col("total_views").desc()).coalesce(1)
 video_by_tag.printSchema()
 
 write_mongo_options = {
-    "connectionName": "TEDx2024",
+    "connectionName": "TEDxLearn",
     "database": "unibg_tedx_2024",
     "collection": "video_da_tag",
     "ssl": "true",
