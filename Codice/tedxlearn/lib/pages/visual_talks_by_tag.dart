@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tedxlearn/models/talk.dart';
+import 'package:tedxlearn/pages/video_details.dart';
 import 'package:tedxlearn/repository/talk_repository.dart';
 import 'package:tedxlearn/styles/stile.dart';
 
@@ -105,8 +106,10 @@ class _VisualTalksState extends State<VisualTalks> {
               ),
             ),
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(listaTalk[index].details)),
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => VideoDetails(talk: listaTalk[index]),
+                ),
               );
             },
           ),
